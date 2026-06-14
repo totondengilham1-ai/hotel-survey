@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Check-in Survey — Hotel On The Rock by Prasanthi</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #1B2B4B; --gold: #C9A84C; --gold-light: #E8C97A;
+    --cream: #F8F5EF; --cream-dark: #EDE8DF; --slate: #8596B0;
+    --white: #FFFFFF;
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--cream); color: var(--navy); min-height: 100vh; }
+
+  .header { background: var(--navy); padding: 28px 24px; text-align: center; }
+  .hotel-badge { font-size: 10px; font-weight: 600; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; display: block; margin-bottom: 8px; }
+  .hotel-name { font-family: 'Playfair Display', serif; font-size: 20px; color: white; font-weight: 400; line-height: 1.4; }
+  .hotel-name em { color: var(--gold-light); font-style: italic; }
+  .hotel-sub { font-size: 11px; color: var(--slate); margin-top: 5px; letter-spacing: 1px; }
+
+  .container { max-width: 480px; margin: 0 auto; padding: 24px 16px 60px; }
+
+  .card { background: white; border-radius: 4px; padding: 28px 24px; border: 1px solid var(--cream-dark); box-shadow: 0 2px 12px rgba(27,43,75,0.06); margin-bottom: 14px; }
+  .card-title { font-family: 'Playfair Display', serif; font-size: 17px; color: var(--navy); margin-bottom: 20px; }
+
+  .star-row { margin-bottom: 18px; }
+  .star-row:last-of-type { margin-bottom: 0; }
+  .star-question { font-size: 13px; font-weight: 500; color: var(--navy); margin-bottom: 8px; }
+  .stars { display: flex; gap: 8px; }
+  .stars button { background: none; border: none; cursor: pointer; font-size: 28px; color: var(--cream-dark); transition: color 0.15s, transform 0.1s; padding: 0; line-height: 1; -webkit-tap-highlight-color: transparent; }
+  .stars button.active { color: var(--gold); }
+  .stars button:hover { transform: scale(1.15); color: var(--gold-light); }
+  .star-hint { font-size: 11px; color: var(--slate); margin-top: 5px; min-height: 16px; }
+
+  .emoji-scale { display: flex; gap: 8px; }
+  .emoji-btn { flex: 1; background: var(--cream); border: 1.5px solid var(--cream-dark); border-radius: 4px; padding: 10px 4px; cursor: pointer; text-align: center; transition: all 0.15s; -webkit-tap-highlight-color: transparent; }
+  .emoji-btn .e { font-size: 24px; display: block; }
+  .emoji-btn .l { font-size: 10px; color: var(--slate); margin-top: 4px; display: block; font-weight: 500; }
+  .emoji-btn.selected { border-color: var(--gold); background: #FDF6E3; box-shadow: 0 0 0 3px rgba(201,168,76,0.15); }
+
+  .field-label { font-size: 12px; font-weight: 600; color: var(--slate); letter-spacing: 0.5px; margin-bottom: 8px; display: block; }
+  textarea { width: 100%; padding: 11px 14px; border: 1.5px solid var(--cream-dark); border-radius: 3px; font-family: 'Inter', sans-serif; font-size: 14px; color: var(--navy); background: var(--cream); outline: none; resize: none; min-height: 80px; line-height: 1.6; transition: border-color 0.2s, background 0.2s; }
+  textarea:focus { border-color: var(--gold); background: white; }
+
+  input[type="text"] { width: 100%; padding: 11px 14px; border: 1.5px solid var(--cream-dark); border-radius: 3px; font-family: 'Inter', sans-serif; font-size: 14px; color: var(--navy); background: var(--cream); outline: none; transition: border-color 0.2s, background 0.2s; -webkit-appearance: none; }
+  input[type="text"]:focus { border-color: var(--gold); background: white; }
+
+  .divider { border: none; border-top: 1px solid var(--cream-dark); margin: 20px 0; }
+
+  .btn-submit { width: 100%; background: var(--navy); color: white; border: none; padding: 15px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; border-radius: 3px; cursor: pointer; transition: background 0.2s, transform 0.1s; }
+  .btn-submit:hover { background: #243660; }
+  .btn-submit:active { transform: scale(0.98); }
+  .btn-submit:disabled { background: var(--slate); cursor: not-allowed; }
+
+  .sending-msg { text-align: center; font-size: 13px; color: var(--slate); margin-top: 12px; min-height: 20px; }
+
+  .thankyou { display: none; text-align: center; padding: 48px 16px; }
+  .thankyou.show { display: block; animation: fadeUp 0.5s ease; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .ty-icon { font-size: 52px; display: block; margin-bottom: 16px; }
+  .ty-score { display: inline-block; background: var(--navy); color: var(--gold); font-family: 'Playfair Display', serif; font-size: 42px; padding: 16px 32px; border-radius: 4px; margin: 16px 0; }
+  .ty-score small { font-size: 16px; color: var(--slate); }
+  .ty-title { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 10px; }
+  .ty-title em { color: var(--gold); font-style: italic; }
+  .ty-desc { font-size: 13px; color: var(--slate); line-height: 1.7; max-width: 300px; margin: 0 auto 24px; }
+  .btn-reset { background: none; border: 1.5px solid var(--navy); color: var(--navy); padding: 10px 28px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; border-radius: 3px; cursor: pointer; transition: all 0.2s; }
+  .btn-reset:hover { background: var(--navy); color: white; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="hotel-badge">★ Guest Satisfaction Survey ★</span>
+  <div class="hotel-name">Hotel On The Rock<br><em>by Prasanthi</em></div>
+  <div class="hotel-sub">Front Office · Check-in Experience</div>
+</div>
+
+<div class="container">
+
+  <div id="formSection">
+
+    <div class="card">
+      <div class="card-title">Guest Information</div>
+      <div style="margin-bottom:14px;">
+        <label class="field-label">Full Name</label>
+        <input type="text" id="guestName" placeholder="Your full name">
+      </div>
+      <div>
+        <label class="field-label">Room Number</label>
+        <input type="text" id="roomNo" placeholder="e.g. 205">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Rate Our Front Office Team</div>
+      <div class="star-row">
+        <div class="star-question">Friendliness & attitude of staff</div>
+        <div class="stars" data-key="friendliness"></div>
+        <div class="star-hint" id="hint_friendliness"></div>
+      </div>
+      <div class="star-row">
+        <div class="star-question">Speed of the check-in process</div>
+        <div class="stars" data-key="speed"></div>
+        <div class="star-hint" id="hint_speed"></div>
+      </div>
+      <div class="star-row">
+        <div class="star-question">Clarity of information provided</div>
+        <div class="stars" data-key="clarity"></div>
+        <div class="star-hint" id="hint_clarity"></div>
+      </div>
+      <div class="star-row">
+        <div class="star-question">Staff appearance & professionalism</div>
+        <div class="stars" data-key="professionalism"></div>
+        <div class="star-hint" id="hint_professionalism"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Overall Check-in Experience</div>
+      <div class="emoji-scale" id="overallEmoji">
+        <button class="emoji-btn" data-val="1"><span class="e">😞</span><span class="l">Disappointed</span></button>
+        <button class="emoji-btn" data-val="2"><span class="e">😐</span><span class="l">Average</span></button>
+        <button class="emoji-btn" data-val="3"><span class="e">🙂</span><span class="l">Satisfied</span></button>
+        <button class="emoji-btn" data-val="4"><span class="e">😊</span><span class="l">Happy</span></button>
+        <button class="emoji-btn" data-val="5"><span class="e">🤩</span><span class="l">Excellent!</span></button>
+      </div>
+      <hr class="divider">
+      <label class="field-label">Comments or suggestions (optional)</label>
+      <textarea id="comment" placeholder="Is there anything you'd like to share with us?"></textarea>
+    </div>
+
+    <button class="btn-submit" id="submitBtn" onclick="submitSurvey()">Submit Feedback</button>
+    <div class="sending-msg" id="sendingMsg"></div>
+  </div>
+
+  <div class="thankyou" id="thankyou">
+    <span class="ty-icon">🌟</span>
+    <div class="ty-title">Thank you,<br><em>valued guest!</em></div>
+    <div class="ty-score" id="tyScore">— <small>/ 5</small></div>
+    <div class="ty-desc">Your feedback has been saved to our records. We are committed to continuously improving our front office service for every guest.</div>
+    <button class="btn-reset" onclick="location.reload()">Submit Another Response</button>
+  </div>
+
+</div>
+
+<script>
+  const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwM1rWUzNcKVZJ2yaEl3HKMsfcXYPd5J9EVdISgm416Ek_80uKVCUjJDlXYwF6DSdE5sA/exec';
+  const ratings = {};
+  const hints = ['Poor', 'Below Average', 'Average', 'Good', 'Excellent'];
+
+  document.querySelectorAll('.stars').forEach(container => {
+    const key = container.dataset.key;
+    for (let i = 1; i <= 5; i++) {
+      const btn = document.createElement('button');
+      btn.textContent = '★';
+      btn.addEventListener('click', () => {
+        ratings[key] = i;
+        updateStars(container, i);
+        document.getElementById('hint_' + key).textContent = hints[i-1];
+      });
+      btn.addEventListener('mouseover', () => updateStars(container, i));
+      btn.addEventListener('mouseout', () => updateStars(container, ratings[key] || 0));
+      container.appendChild(btn);
+    }
+  });
+
+  function updateStars(container, val) {
+    container.querySelectorAll('button').forEach((b, i) => b.classList.toggle('active', i < val));
+  }
+
+  document.querySelectorAll('#overallEmoji .emoji-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#overallEmoji .emoji-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+  });
+
+  async function submitSurvey() {
+    const guestName = document.getElementById('guestName').value.trim();
+    const roomNo = document.getElementById('roomNo').value.trim();
+
+    if (!guestName) {
+      alert('Please enter your name before submitting.');
+      return;
+    }
+
+    const vals = Object.values(ratings);
+    const avgScore = vals.length ? (vals.reduce((a,b) => a+b, 0) / vals.length).toFixed(1) : '—';
+    const overallBtn = document.querySelector('#overallEmoji .emoji-btn.selected');
+    const overallFeeling = overallBtn ? overallBtn.querySelector('.l').textContent : '—';
+
+    const payload = {
+      guestName,
+      roomNo,
+      friendliness: ratings['friendliness'] || '—',
+      speed: ratings['speed'] || '—',
+      clarity: ratings['clarity'] || '—',
+      professionalism: ratings['professionalism'] || '—',
+      overallFeeling,
+      avgScore,
+      comment: document.getElementById('comment').value.trim()
+    };
+
+    const btn = document.getElementById('submitBtn');
+    const msg = document.getElementById('sendingMsg');
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    msg.textContent = '⏳ Saving your feedback to Google Sheets...';
+
+    try {
+      await fetch(SHEET_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      // no-cors means we can't read response, but if no error = success
+      document.getElementById('formSection').style.display = 'none';
+      const ty = document.getElementById('thankyou');
+      ty.classList.add('show');
+      document.getElementById('tyScore').innerHTML = avgScore + ' <small>/ 5</small>';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    } catch (err) {
+      msg.textContent = '❌ Failed to send. Please check your connection and try again.';
+      btn.disabled = false;
+      btn.textContent = 'Submit Feedback';
+    }
+  }
+</script>
+</body>
+</html>
